@@ -9,6 +9,8 @@ using namespace std;
 int main(int argc, char *argv[]) {
    int numChar = 0;
    int i = 0;
+
+   // error handling to catch invalid files being opened
    try {
       ifstream readFile(argv[1]);
       if (readFile) {
@@ -24,14 +26,16 @@ int main(int argc, char *argv[]) {
       return -1;
    }
    
-
+   //initiate variables to read from the file and to create child process
    char message[numChar];
    int pip[2], child, result;
    char instring[numChar];
 
+   // opens files to be read and written to
    ifstream readFile2(argv[1]);
    ofstream writeFile(argv[2]);
 
+   // reads from input file
    if (readFile2.is_open()) {
          while(readFile2){
             message[i] = readFile2.get();
@@ -40,6 +44,7 @@ int main(int argc, char *argv[]) {
       readFile2.close();
       }
 
+   // creates a pipe and child process
    result = pipe(pip);
    if (result == -1) {
       perror("pipe");
@@ -47,6 +52,8 @@ int main(int argc, char *argv[]) {
    }
 
    child = fork();
+
+   //error handling in case a child process cannot be created
    if (child == -1){
       perror("Trouble creating child process");
       exit(2);
@@ -60,6 +67,7 @@ int main(int argc, char *argv[]) {
    } else {
       close(pip[1]);
       read(pip[0], instring, numChar);
+      // writes to the destination file
       if (writeFile.is_open()) {
          writeFile << instring;
          writeFile.close();
@@ -70,8 +78,6 @@ int main(int argc, char *argv[]) {
    " to " << argv[2];
       exit(0);
    } 
-
-   
 
    return 0;
 }
