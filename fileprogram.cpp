@@ -5,23 +5,40 @@
 #include <unistd.h>
 using namespace std;
 
+
 int main(int argc, char *argv[]) {
    int numChar = 0;
-   char message[100];
    int i = 0;
-   ifstream readFile(argv[1]);
+   try {
+      ifstream readFile(argv[1]);
+      if (readFile) {
+      readFile.seekg(0, ios::end);
+      numChar = readFile.tellg();
+      readFile.close();
+      } else {
+         throw runtime_error("Unable to open source file ");
+      }
+      
+   } catch (const exception& e) {
+      cerr << "Error: " << e.what() << "'" << argv[1] << "'";
+      return -1;
+   }
+   
+
+   char message[numChar];
+   int pip[2], child, result;
+   char instring[numChar];
+
+   ifstream readFile2(argv[1]);
    ofstream writeFile(argv[2]);
 
-   if (readFile.is_open()) {
-      while(readFile){
-         message[i] = readFile.get();
-         numChar++;
-         i++;
+   if (readFile2.is_open()) {
+         while(readFile2){
+            message[i] = readFile2.get();
+            i++;
+      } 
+      readFile2.close();
       }
-   }
-   int pip[2], child;
-   int result;
-   char instring[numChar];
 
    result = pipe(pip);
    if (result == -1) {
@@ -33,8 +50,8 @@ int main(int argc, char *argv[]) {
    if (child == -1){
       perror("Trouble creating child process");
       exit(2);
-   }
-   else if (child == 0) {
+
+   } else if (child == 0) {
       close(pip[0]);
       write(pip[1], message, numChar);
       close(pip[1]);
@@ -43,14 +60,18 @@ int main(int argc, char *argv[]) {
    } else {
       close(pip[1]);
       read(pip[0], instring, numChar);
-      if (writeFile.is_open()){
+      if (writeFile.is_open()) {
          writeFile << instring;
-         
+         writeFile.close();
       }
-
+      
       close(pip[0]);
+      cout << "File successfully copied from " << argv[1] << 
+   " to " << argv[2];
       exit(0);
-   }
+   } 
+
+   
 
    return 0;
 }
