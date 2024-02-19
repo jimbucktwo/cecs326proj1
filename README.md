@@ -1,0 +1,1 @@
+In the main file named fileprogram.cpp, to compile on a Linux/Mac system type in the command "cpp filecopy.cpp -o filecopy" and run the program via the command "./filecopy [read file (named input.txt)] [destination file]". If running on a Windows system, visual
