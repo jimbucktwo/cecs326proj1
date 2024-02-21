@@ -1,0 +1,2 @@
+While working on this project, I had to do additional research on exactly how to implement a child process using pipe() and fork() keywords in C++. I chose to program in C++
+because 
