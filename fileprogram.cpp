@@ -1,9 +1,11 @@
+// Jimmy Tran, 028343131, CSULB CECS 326
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <unistd.h>
 using namespace std;
+
 
 
 int main(int argc, char *argv[]) {
@@ -58,6 +60,7 @@ int main(int argc, char *argv[]) {
       perror("Trouble creating child process");
       exit(2);
 
+   // Write end of the pipe, must close other end before executing
    } else if (child == 0) {
       close(pip[0]);
       write(pip[1], message, numChar);
